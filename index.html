@@ -47,7 +47,7 @@
         }
 
         .calc-container .upper .text {
-        font-size: 30px;
+            font-size: 30px;
         }
 
         .calc-container .upper .sequence-container {
@@ -66,21 +66,23 @@
             text-align: center;
             margin: 2px
         }
-        #addTerm{
+
+        #addTerm {
             flex: 2;
         }
+
         #removeTerm {
             flex: 2;
         }
 
 
 
-        .calc-container .lower > div{
+        .calc-container .lower>div {
             margin: 5px 0;
             height: 25px;
         }
 
-        .calc-container .lower > div > input {
+        .calc-container .lower>div>input {
             width: 50px;
         }
 
@@ -91,10 +93,10 @@
         /* .calc-container .upper .sequence-container .sequence-terms::after{
             content: ",";
         } */
-         .float-right{
+        .float-right {
             float: right;
             margin-left: 40px;
-         }
+        }
     </style>
 </head>
 
@@ -106,9 +108,9 @@
                 <div class="text">
 
                     <p>Sequence</p>
-                    
+
                 </div>
-                
+
                 <div class="sequence-container">
                 </div>
                 <div class="buttons">
@@ -120,7 +122,8 @@
             </div>
             <div class="lower">
                 <div>First Term (a) = <input type="text" id="firstTerm" class="first-term float-right"></div>
-                <div>Commmon Difference = <input type="text" id="commonDifference" class="common-difference float-right"></div>
+                <div>Commmon Difference = <input type="text" id="commonDifference"
+                        class="common-difference float-right"></div>
                 <div><input type="text" value="n" id="nTerm"><sup>th</sup> Term (t<sub>n</sub>) = <input type="text"
                         id="nThTerm" class="float-right"></div>
                 <div>Sum Of First <input type="text" value="n" id="sumOfNTerms">Terms (S<sub>n</sub>) = <input
@@ -155,19 +158,20 @@
 
 
         sequenceContainerNode.addEventListener('input', (e) => {
-            writeNote();
-            updateFirstTerm();
-            updateCommonDifferenceElement();
+            reloadEverything();
         })
 
 
         firstTermElementNode.addEventListener('input', (e) => {
+            reloadEverything();
             despawnSequenceElements();
             sequenceArray = createAp(firstTermElementNode.value, commonDifferenceElementNode.value, 5);
             spawnSequenceElements(sequenceArray);
+
         })
 
         commonDifferenceElementNode.addEventListener('input', (e) => {
+            reloadEverything();
             despawnSequenceElements();
             sequenceArray = createAp(firstTermElementNode.value, commonDifferenceElementNode.value, 5);
             spawnSequenceElements(sequenceArray);
@@ -175,6 +179,7 @@
 
 
         addTermButton.addEventListener('click', (e) => {
+            reloadEverything();
             let sequenceElementNode = document.createElement('input');
             sequenceElementNode.classList.add('sequence-terms');
 
@@ -187,31 +192,30 @@
 
             sequenceContainerNode.appendChild(sequenceElementNode);
 
-            reloadElementVariables()
+
         })
         removeTermButtom.addEventListener('click', (e) => {
             if (!Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1]) return;
-
-
+            
+            
             let lastChildNode = Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1];
             sequenceContainerNode.removeChild(lastChildNode);
             sequenceArray.pop();
+            
+            reloadEverything();
 
-
-            reloadElementVariables()
         })
 
         nTermElementNode.addEventListener('input', (e) => {
-            if (!isSequenceAp()) {
-                nThTermElementNode.value = NaN;
-            } else {
-                nThTermElementNode.value = nThTerm(nTermElementNode.value);
-            }
+            reloadEverything();
+            updateNThTerm();
             return;
         })
 
         sumOfNTermsElementNode.addEventListener('input', (e) => {
-            sumOfNThTermsElementNode.value = sumOfNTerms(sumOfNTermsElementNode.value);
+            reloadEverything();
+            updateSumOfNTerms();
+            // sumOfNThTermsElementNode.value = sumOfNTerms(sumOfNTermsElementNode.value);
         })
 
         function writeNote() {
@@ -330,19 +334,20 @@
 
 
         function updateFirstTerm() {
-            let firstTerm = sequenceContainerNode.firstElementChild.value;
+            let firstTerm = parseInt(sequenceContainerNode.firstElementChild.value);
             firstTermElementNode.value = firstTerm;
             return;
         }
 
         function _commonDifference() {
             let commonDifferenceArray = []
+            commonDifference = NaN;
 
             for (let i = 0; i < sequenceArray.length; i++) {
                 if (sequenceArray.length == i + 1) {
-                    // commonDifference = null;
                     break;
                 }
+
                 commonDifferenceArray.push(sequenceArray[i + 1] - sequenceArray[i]);
 
             }
@@ -353,7 +358,7 @@
                 const I = commonDifferenceArray[i];
                 const II = commonDifferenceArray[i + 1];
 
-                if (I != II) return null;
+                if (I != II) return commonDifference;
             }
 
             commonDifference = commonDifferenceArray[0];
@@ -381,28 +386,27 @@
             }
 
             let sum = (n / 2) * ((firstTerm * 2) + ((n - 1) * commonDifference))
-            console.log(sum)
             return sum;
         }
 
         function updateSumOfNTerms() {
-            sumOfNThTermsElementNode.value = sumOfNTerms(sumOfNTermsElementNode.value);
+            sumOfNThTermsElementNode.value = sumOfNTerms(parseInt(sumOfNTermsElementNode.value));
             return;
         }
 
         function updateNThTerm() {
-            nThTermElementNode.value = nThTerm(nTermElementNode.value);
+            nThTermElementNode.value = nThTerm(parseInt(nTermElementNode.value));
             return;
         }
 
         function getRandomAp() {
-            firstTerm = getRandomNumber(1,20);
+            firstTerm = getRandomNumber(1, 20);
             commonDifference = getRandomNumber(1, 10);
 
             sequenceArray = createAp(firstTerm, commonDifference, 5)
 
-            nTermElementNode.value = getRandomNumber(1,10);
-            sumOfNTermsElementNode.value = getRandomNumber(1,10);
+            nTermElementNode.value = getRandomNumber(1, 10);
+            sumOfNTermsElementNode.value = getRandomNumber(1, 10);
 
             spawnSequenceElements(sequenceArray);
         }
