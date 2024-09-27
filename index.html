@@ -17,8 +17,10 @@
         }
 
         main {
-            min-width: 100vh;
-            min-height: 90vh;
+            max-width: 100vw;
+            min-width: 99vw;
+
+            height: 90vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -92,10 +94,17 @@
 
         #addTerm {
             flex: 2;
+            width: 20px;
+            height: 20px;
+            margin: 3px;
+
         }
 
         #removeTerm {
             flex: 2;
+            margin: 3px;
+            width: 20px;
+            height: 20px;
         }
 
         #note{
@@ -104,12 +113,18 @@
 
 
         .calc-container .lower {
-            padding: 40px;
+            /* padding: 40px; */
         }
 
         .calc-container .lower>div {
-            margin: 5px 0;
+            margin: 10px 0;
             height: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .calc-container .lower > div > *{
+            display: inline;
         }
 
         .calc-container .lower>div>input {
@@ -169,11 +184,11 @@
             </div>
             <div class="lower">
                 <div>First Term (a) = <input type="text" id="firstTerm" class="first-term float-right"></div>
-                <div>Commmon Difference (d) = <input type="text" id="commonDifference"
+                <div>Common Difference (d) = <input type="text" id="commonDifference"
                         class="common-difference float-right"></div>
-                <div><input type="text" value="n" id="nTerm" class="width-20"><sup>th</sup> Term (t<sub>n</sub>) = <input type="text"
+                <div><span><input type="text" value="n" id="nTerm" class="width-20"><sup>th</sup> Term (t<sub>n</sub>) = </span><input type="text"
                         id="nThTerm" class="float-right"></div>
-                <div>Sum Of First <input type="text" value="n" id="sumOfNTerms" class="width-20"> Terms (S<sub>n</sub>) = <input
+                <div><span>Sum Of First <input type="text" value="n" id="sumOfNTerms" class="width-20"> Terms (S<sub>n</sub>) = </span><input
                         type="text" id="sumOfNThTerm" class="float-right"></div>
 
             </div>
