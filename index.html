@@ -10,6 +10,11 @@
             box-sizing: border-box;
         }
 
+        body {
+            background-color: #1e1f22;
+            color: white;
+            font-family: sans-serif;
+        }
 
         main {
             min-width: 100vh;
@@ -18,6 +23,23 @@
             justify-content: center;
             align-items: center;
         }
+
+
+        input:enabled {
+            /* border-radius: 2px; */
+            border: none;
+            outline: none;
+        }
+        input{
+            background-color: #1e1f22  !important;
+            text-align: center;
+            color: white;
+            border-radius: 4px;
+        }
+        input:hover{
+            
+        }
+
 
         .calc-container {
             display: flex;
@@ -28,6 +50,9 @@
             max-width: 80%;
             min-width: 200px;
             font-size: 20px;
+            background-color: #313338;
+            border-radius: 20px;
+            padding: 30px;
         }
 
         /* 
@@ -43,11 +68,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-evenly;
-            padding: 30px;
+            padding: 10px;
         }
 
         .calc-container .upper .text {
             font-size: 30px;
+            margin-bottom: 10px;
         }
 
         .calc-container .upper .sequence-container {
@@ -75,7 +101,14 @@
             flex: 2;
         }
 
+        #note{
+        margin-top: 20px;    
+        }
 
+
+        .calc-container .lower {
+            padding: 40px;
+        }
 
         .calc-container .lower>div {
             margin: 5px 0;
@@ -84,6 +117,10 @@
 
         .calc-container .lower>div>input {
             width: 50px;
+            background-color: #313338;
+            color: white;
+            font-size: medium;
+            border: none;
         }
 
         /* .calc-container .upper .sequence-container .sequence-terms:focus{
@@ -95,7 +132,12 @@
         } */
         .float-right {
             float: right;
-            margin-left: 40px;
+            margin-left: 50px;
+        }
+        .width-20{
+            width: 20px !important;
+            text-align: center;
+            font-size: medium;
         }
     </style>
 </head>
@@ -104,6 +146,8 @@
     <main>
 
         <div class="calc-container">
+            <h1>Arithmetic Progression Calc</h1>
+
             <div class="upper">
                 <div class="text">
 
@@ -122,11 +166,11 @@
             </div>
             <div class="lower">
                 <div>First Term (a) = <input type="text" id="firstTerm" class="first-term float-right"></div>
-                <div>Commmon Difference = <input type="text" id="commonDifference"
+                <div>Commmon Difference (d) = <input type="text" id="commonDifference"
                         class="common-difference float-right"></div>
-                <div><input type="text" value="n" id="nTerm"><sup>th</sup> Term (t<sub>n</sub>) = <input type="text"
+                <div><input type="text" value="n" id="nTerm" class="width-20"><sup>th</sup> Term (t<sub>n</sub>) = <input type="text"
                         id="nThTerm" class="float-right"></div>
-                <div>Sum Of First <input type="text" value="n" id="sumOfNTerms">Terms (S<sub>n</sub>) = <input
+                <div>Sum Of First <input type="text" value="n" id="sumOfNTerms" class="width-20"> Terms (S<sub>n</sub>) = <input
                         type="text" id="sumOfNThTerm" class="float-right"></div>
 
             </div>
@@ -196,12 +240,12 @@
         })
         removeTermButtom.addEventListener('click', (e) => {
             if (!Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1]) return;
-            
-            
+
+
             let lastChildNode = Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1];
             sequenceContainerNode.removeChild(lastChildNode);
             sequenceArray.pop();
-            
+
             reloadEverything();
 
         })
@@ -221,13 +265,13 @@
         function writeNote() {
             if (isSequenceAp()) {
                 if (!commonDifference) {
-                    messageElementNode.innerHTML = 'Above Sequence is NOT An Arithmetic Progression'
+                    messageElementNode.innerHTML = 'Above Sequence is NOT an Arithmetic Progression'
                     return;
                 }
-                messageElementNode.innerHTML = 'Above Sequence is An Arithmetic Progression'
+                messageElementNode.innerHTML = 'Above Sequence is an Arithmetic Progression'
                 return;
             } else {
-                messageElementNode.innerHTML = 'Above Sequence is NOT An Arithmetic Progression'
+                messageElementNode.innerHTML = 'Above Sequence is NOT an Arithmetic Progression'
                 return;
             }
 
