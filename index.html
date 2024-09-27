@@ -27,6 +27,7 @@
             align-items: center;
             max-width: 80%;
             min-width: 200px;
+            font-size: 20px;
         }
 
         /* 
@@ -42,9 +43,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-evenly;
+            padding: 30px;
         }
 
-        .calc-container .upper .text {}
+        .calc-container .upper .text {
+        font-size: 30px;
+        }
 
         .calc-container .upper .sequence-container {
             display: flex;
@@ -62,6 +66,23 @@
             text-align: center;
             margin: 2px
         }
+        #addTerm{
+            flex: 2;
+        }
+        #removeTerm {
+            flex: 2;
+        }
+
+
+
+        .calc-container .lower > div{
+            margin: 5px 0;
+            height: 25px;
+        }
+
+        .calc-container .lower > div > input {
+            width: 50px;
+        }
 
         /* .calc-container .upper .sequence-container .sequence-terms:focus{
             
@@ -70,6 +91,10 @@
         /* .calc-container .upper .sequence-container .sequence-terms::after{
             content: ",";
         } */
+         .float-right{
+            float: right;
+            margin-left: 40px;
+         }
     </style>
 </head>
 
@@ -81,21 +106,25 @@
                 <div class="text">
 
                     <p>Sequence</p>
+                    
+                </div>
+                
+                <div class="sequence-container">
+                </div>
+                <div class="buttons">
+
                     <input type="button" value="-" id="removeTerm">
                     <input type="button" value="+" id="addTerm">
-
                 </div>
-
-                <div class="sequence-container">
-                    <input type="text" value="1" class="sequence-terms"></input>
-                </div>
-
                 <div id="note"></div>
             </div>
             <div class="lower">
-                <div>First Term (a) = <input type="text" id="firstTerm" class="first-term"></div>
-                <div>Commmon Difference = <input type="text" id="commonDifference" class="common-difference"></div>
-                <div><input type="text" value="n" id="nTerm"><sup>th</sup> term = <input type="text" id="nThTerm"></div>
+                <div>First Term (a) = <input type="text" id="firstTerm" class="first-term float-right"></div>
+                <div>Commmon Difference = <input type="text" id="commonDifference" class="common-difference float-right"></div>
+                <div><input type="text" value="n" id="nTerm"><sup>th</sup> Term (t<sub>n</sub>) = <input type="text"
+                        id="nThTerm" class="float-right"></div>
+                <div>Sum Of First <input type="text" value="n" id="sumOfNTerms">Terms (S<sub>n</sub>) = <input
+                        type="text" id="sumOfNThTerm" class="float-right"></div>
 
             </div>
         </div>
@@ -110,22 +139,26 @@
         const messageElementNode = document.querySelector('#note');
         const addTermButton = document.querySelector('#addTerm');
         const removeTermButtom = document.querySelector('#removeTerm');
-        const firstTermElementNode = document.querySelector('#firstTerm')
+        let firstTermElementNode = document.querySelector('#firstTerm')
         const commonDifferenceElementNode = document.querySelector('#commonDifference')
         const nTermElementNode = document.querySelector('#nTerm');
-        const nThTermElementNode = document.querySelector('#nThTerm')
+        const nThTermElementNode = document.querySelector('#nThTerm');
+        const sumOfNTermsElementNode = document.querySelector('#sumOfNTerms');
+        const sumOfNThTermsElementNode = document.querySelector('#sumOfNThTerm');
 
 
         let sequenceArray = [];
         let firstTerm, commonDifference;
-        reloadSequenceArray();
-        writeNote();
+
+        getRandomAp()
+        reloadEverything();
 
 
-        calcContainer.addEventListener('input', (e)=>{
+        sequenceContainerNode.addEventListener('input', (e) => {
             writeNote();
+            updateFirstTerm();
+            updateCommonDifferenceElement();
         })
-
 
 
         firstTermElementNode.addEventListener('input', (e) => {
@@ -144,6 +177,14 @@
         addTermButton.addEventListener('click', (e) => {
             let sequenceElementNode = document.createElement('input');
             sequenceElementNode.classList.add('sequence-terms');
+
+
+            if (isSequenceAp() && commonDifference) {
+                let nextTerm = sequenceArray[sequenceArray.length - 1] + commonDifference;
+                sequenceArray.push(nextTerm);
+                sequenceElementNode.value = nextTerm;
+            }
+
             sequenceContainerNode.appendChild(sequenceElementNode);
 
             reloadElementVariables()
@@ -151,19 +192,42 @@
         removeTermButtom.addEventListener('click', (e) => {
             if (!Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1]) return;
 
+
             let lastChildNode = Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1];
             sequenceContainerNode.removeChild(lastChildNode);
+            sequenceArray.pop();
+
 
             reloadElementVariables()
         })
 
-
-        function writeNote(){
-            if(isSequenceAp()){
-                messageElementNode.innerHTML = 'Above Sequence is An Arithmetic Progression'
-            }else{
-                messageElementNode.innerHTML = 'Above Sequence is NOT An Arithmetic Progression'
+        nTermElementNode.addEventListener('input', (e) => {
+            if (!isSequenceAp()) {
+                nThTermElementNode.value = NaN;
+            } else {
+                nThTermElementNode.value = nThTerm(nTermElementNode.value);
             }
+            return;
+        })
+
+        sumOfNTermsElementNode.addEventListener('input', (e) => {
+            sumOfNThTermsElementNode.value = sumOfNTerms(sumOfNTermsElementNode.value);
+        })
+
+        function writeNote() {
+            if (isSequenceAp()) {
+                if (!commonDifference) {
+                    messageElementNode.innerHTML = 'Above Sequence is NOT An Arithmetic Progression'
+                    return;
+                }
+                messageElementNode.innerHTML = 'Above Sequence is An Arithmetic Progression'
+                return;
+            } else {
+                messageElementNode.innerHTML = 'Above Sequence is NOT An Arithmetic Progression'
+                return;
+            }
+
+            return;
         }
 
         function reloadElementVariables() {
@@ -186,7 +250,7 @@
 
         function despawnSequenceElements() {
 
-            sequenceTermsElementNodes.forEach((element, key)=>{
+            sequenceTermsElementNodes.forEach((element, key) => {
                 element.remove();
             })
 
@@ -211,7 +275,11 @@
         function reloadEverything() {
             reloadSequenceArray();
             reloadElementVariables();
-
+            updateCommonDifferenceElement();
+            updateFirstTerm();
+            writeNote();
+            updateNThTerm();
+            updateSumOfNTerms();
         }
 
 
@@ -228,12 +296,19 @@
 
         function isSequenceAp() {
             reloadSequenceArray();
-            if (sequenceArray.length < 1) return false;
+            if (sequenceArray.length <= 1) {
+                commonDifference = null;
+                return false;
+            }
+
 
             let commonDifferenceArray = []
 
             for (let i = 0; i < sequenceArray.length; i++) {
-                if (sequenceArray.length == i + 1) break
+                if (sequenceArray.length == i + 1) {
+                    commonDifference = null;
+                    break;
+                }
                 commonDifferenceArray.push(sequenceArray[i + 1] - sequenceArray[i]);
 
             }
@@ -245,6 +320,7 @@
                 const II = commonDifferenceArray[i + 1];
 
                 if (I != II) return false;
+                commonDifference = null;
             }
 
             firstTerm = sequenceArray[0];
@@ -253,9 +329,89 @@
         }
 
 
-        function upDateFirstTerm(){
-            
+        function updateFirstTerm() {
+            let firstTerm = sequenceContainerNode.firstElementChild.value;
+            firstTermElementNode.value = firstTerm;
+            return;
         }
+
+        function _commonDifference() {
+            let commonDifferenceArray = []
+
+            for (let i = 0; i < sequenceArray.length; i++) {
+                if (sequenceArray.length == i + 1) {
+                    // commonDifference = null;
+                    break;
+                }
+                commonDifferenceArray.push(sequenceArray[i + 1] - sequenceArray[i]);
+
+            }
+
+            for (let i = 0; i < commonDifferenceArray.length; i++) {
+                if (commonDifferenceArray.length == i + 1) break;
+
+                const I = commonDifferenceArray[i];
+                const II = commonDifferenceArray[i + 1];
+
+                if (I != II) return null;
+            }
+
+            commonDifference = commonDifferenceArray[0];
+
+            return commonDifference;
+        }
+
+        function updateCommonDifferenceElement() {
+            commonDifferenceElementNode.value = _commonDifference();
+        }
+
+        function nThTerm(n) {
+            if (!commonDifference || !firstTerm || !sequenceArray[1]) {
+                return NaN;
+            }
+            let nThTerm = firstTerm + ((n - 1) * commonDifference)
+            return nThTerm;
+        }
+
+        function sumOfNTerms(n) {
+            // n / 2 * (a*2 + (n - 1) * d)
+
+            if (!commonDifference || !firstTerm || !sequenceArray[1]) {
+                return NaN;
+            }
+
+            let sum = (n / 2) * ((firstTerm * 2) + ((n - 1) * commonDifference))
+            console.log(sum)
+            return sum;
+        }
+
+        function updateSumOfNTerms() {
+            sumOfNThTermsElementNode.value = sumOfNTerms(sumOfNTermsElementNode.value);
+            return;
+        }
+
+        function updateNThTerm() {
+            nThTermElementNode.value = nThTerm(nTermElementNode.value);
+            return;
+        }
+
+        function getRandomAp() {
+            firstTerm = getRandomNumber(1,20);
+            commonDifference = getRandomNumber(1, 10);
+
+            sequenceArray = createAp(firstTerm, commonDifference, 5)
+
+            nTermElementNode.value = getRandomNumber(1,10);
+            sumOfNTermsElementNode.value = getRandomNumber(1,10);
+
+            spawnSequenceElements(sequenceArray);
+        }
+
+        function getRandomNumber(min, max) {
+            return Math.round(Math.random() * (max - min) + min);
+        }
+
+
         // console.log(isAp());
 
     </script>
