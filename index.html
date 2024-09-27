@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Calc</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+
+        main {
+            min-width: 100vh;
+            min-height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .calc-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* background-color: ; */
+            align-items: center;
+            max-width: 80%;
+            min-width: 200px;
+        }
+
+        /* 
+        .calc-container>div {
+            height: auto;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            } */
+
+        .calc-container .upper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+        }
+
+        .calc-container .upper .text {}
+
+        .calc-container .upper .sequence-container {
+            display: flex;
+            flex-wrap: wrap;
+            flex: 2;
+        }
+
+        .calc-container .upper p {
+            margin: 0;
+        }
+
+        .calc-container .upper .sequence-container .sequence-terms {
+            height: 20px;
+            width: 40px;
+            text-align: center;
+            margin: 2px
+        }
+
+        /* .calc-container .upper .sequence-container .sequence-terms:focus{
+            
+        } */
+
+        /* .calc-container .upper .sequence-container .sequence-terms::after{
+            content: ",";
+        } */
+    </style>
+</head>
+
+<body>
+    <main>
+
+        <div class="calc-container">
+            <div class="upper">
+                <div class="text">
+
+                    <p>Sequence</p>
+                    <input type="button" value="-" id="removeTerm">
+                    <input type="button" value="+" id="addTerm">
+
+                </div>
+
+                <div class="sequence-container">
+                    <input type="text" value="1" class="sequence-terms"></input>
+                </div>
+
+                <div id="note"></div>
+            </div>
+            <div class="lower">
+                <div>First Term (a) = <input type="text" id="firstTerm" class="first-term"></div>
+                <div>Commmon Difference = <input type="text" id="commonDifference" class="common-difference"></div>
+                <div><input type="text" value="n" id="nTerm"><sup>th</sup> term = <input type="text" id="nThTerm"></div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        const calcContainer = document.querySelector('.calc-container');
+        let sequenceContainerNode = document.querySelector('.sequence-container');
+        let sequenceElementNodes = sequenceContainerNode.children;
+        let sequenceTermsElementNodes = document.querySelectorAll('.sequence-terms');
+        const messageElementNode = document.querySelector('#note');
+        const addTermButton = document.querySelector('#addTerm');
+        const removeTermButtom = document.querySelector('#removeTerm');
+        const firstTermElementNode = document.querySelector('#firstTerm')
+        const commonDifferenceElementNode = document.querySelector('#commonDifference')
+        const nTermElementNode = document.querySelector('#nTerm');
+        const nThTermElementNode = document.querySelector('#nThTerm')
+
+
+        let sequenceArray = [];
+        let firstTerm, commonDifference;
+        reloadSequenceArray();
+        writeNote();
+
+
+        calcContainer.addEventListener('input', (e)=>{
+            writeNote();
+        })
+
+
+
+        firstTermElementNode.addEventListener('input', (e) => {
+            despawnSequenceElements();
+            sequenceArray = createAp(firstTermElementNode.value, commonDifferenceElementNode.value, 5);
+            spawnSequenceElements(sequenceArray);
+        })
+
+        commonDifferenceElementNode.addEventListener('input', (e) => {
+            despawnSequenceElements();
+            sequenceArray = createAp(firstTermElementNode.value, commonDifferenceElementNode.value, 5);
+            spawnSequenceElements(sequenceArray);
+        })
+
+
+        addTermButton.addEventListener('click', (e) => {
+            let sequenceElementNode = document.createElement('input');
+            sequenceElementNode.classList.add('sequence-terms');
+            sequenceContainerNode.appendChild(sequenceElementNode);
+
+            reloadElementVariables()
+        })
+        removeTermButtom.addEventListener('click', (e) => {
+            if (!Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1]) return;
+
+            let lastChildNode = Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1];
+            sequenceContainerNode.removeChild(lastChildNode);
+
+            reloadElementVariables()
+        })
+
+
+        function writeNote(){
+            if(isSequenceAp()){
+                messageElementNode.innerHTML = 'Above Sequence is An Arithmetic Progression'
+            }else{
+                messageElementNode.innerHTML = 'Above Sequence is NOT An Arithmetic Progression'
+            }
+        }
+
+        function reloadElementVariables() {
+            sequenceContainerNode = document.querySelector('.sequence-container');
+            sequenceElementNodes = sequenceContainerNode.children;
+            sequenceTermsElementNodes = document.querySelectorAll('.sequence-terms');
+        }
+
+        function spawnSequenceElements(sequence) {
+            for (let i = 0; i < sequence.length; i++) {
+                let sequenceElementNode = document.createElement('input');
+
+                sequenceElementNode.classList.add('sequence-terms');
+                sequenceElementNode.value = sequence[i];
+                sequenceContainerNode.appendChild(sequenceElementNode);
+            }
+            reloadElementVariables()
+            return;
+        }
+
+        function despawnSequenceElements() {
+
+            sequenceTermsElementNodes.forEach((element, key)=>{
+                element.remove();
+            })
+
+            sequenceArray = [];
+
+            reloadElementVariables()
+            return;
+        }
+
+
+        function createAp(a, d, n) {
+            a = parseInt(a);
+            d = parseInt(d);
+            n = parseInt(n);
+            let sequence = [];
+            for (let i = 1; i <= n; i++) {
+                sequence.push(a + ((i - 1) * d));
+            }
+            return sequence;
+        }
+
+        function reloadEverything() {
+            reloadSequenceArray();
+            reloadElementVariables();
+
+        }
+
+
+        function reloadSequenceArray() {
+            sequenceArray = [];
+
+            for (let i = 0; i < sequenceElementNodes.length; i++) {
+                const sequenceElement = Array.from(sequenceElementNodes)[i];
+                if (sequenceElement.localName != 'input') continue;
+                sequenceArray.push(parseInt(sequenceElement.value))
+            }
+            return;
+        }
+
+        function isSequenceAp() {
+            reloadSequenceArray();
+            if (sequenceArray.length < 1) return false;
+
+            let commonDifferenceArray = []
+
+            for (let i = 0; i < sequenceArray.length; i++) {
+                if (sequenceArray.length == i + 1) break
+                commonDifferenceArray.push(sequenceArray[i + 1] - sequenceArray[i]);
+
+            }
+
+            for (let i = 0; i < commonDifferenceArray.length; i++) {
+                if (commonDifferenceArray.length == i + 1) break;
+
+                const I = commonDifferenceArray[i];
+                const II = commonDifferenceArray[i + 1];
+
+                if (I != II) return false;
+            }
+
+            firstTerm = sequenceArray[0];
+            commonDifference = commonDifferenceArray[0];
+            return true;
+        }
+
+
+        function upDateFirstTerm(){
+            
+        }
+        // console.log(isAp());
+
+    </script>
+</body>
+
+</html>
