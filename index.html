@@ -227,7 +227,6 @@
 
 
         firstTermElementNode.addEventListener('input', (e) => {
-            reloadEverything();
             despawnSequenceElements();
             sequenceArray = createAp(firstTermElementNode.value, commonDifferenceElementNode.value, 5);
             spawnSequenceElements(sequenceArray);
@@ -235,7 +234,6 @@
         })
 
         commonDifferenceElementNode.addEventListener('input', (e) => {
-            reloadEverything();
             despawnSequenceElements();
             sequenceArray = createAp(firstTermElementNode.value, commonDifferenceElementNode.value, 5);
             spawnSequenceElements(sequenceArray);
@@ -478,9 +476,6 @@
         function getRandomNumber(min, max) {
             return Math.round(Math.random() * (max - min) + min);
         }
-
-
-        // console.log(isAp());
 
     </script>
 </body>
