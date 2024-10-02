@@ -94,8 +94,8 @@
 
         #addTerm {
             flex: 2;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             margin: 3px;
 
         }
@@ -103,8 +103,8 @@
         #removeTerm {
             flex: 2;
             margin: 3px;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
         }
 
         #note{
@@ -241,7 +241,7 @@
 
 
         addTermButton.addEventListener('click', (e) => {
-            reloadEverything();
+            
             let sequenceElementNode = document.createElement('input');
             sequenceElementNode.classList.add('sequence-terms');
 
@@ -253,9 +253,11 @@
             }
 
             sequenceContainerNode.appendChild(sequenceElementNode);
-
+            console.log('a sequence Term element is added');
+            reloadEverything();
 
         })
+        
         removeTermButtom.addEventListener('click', (e) => {
             if (!Array.from(sequenceElementNodes)[sequenceElementNodes.length - 1]) return;
 
